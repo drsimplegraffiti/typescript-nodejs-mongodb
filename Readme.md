@@ -1,5 +1,23 @@
 # Backend Server NodeJS, Typescript, MongoDb
 
+```mermaid
+journey
+	title Typescript with Express and Node JS
+	section Installation
+		Node: 1: Software
+		MongoDb: 2: Software
+		Running serverwith ts-node: 3: Software, Concept
+		Creating Express Server: 5: Software, Concept
+	section Concepts
+		Routing: 2: Concept
+		Error Handling: 1:  Concept
+	section Form validation
+		Express Validator: 5: Software
+		Hashing with bcrypt: 2: Concept
+```
+
+---
+
 ## Software installation
 
 > Nodejs
@@ -1084,7 +1102,7 @@ export default useRouter;
 
 ## Folder structure ----> Service , Routes, Controller, Model
 
-```mermaid
+```html
 - Services
   - Controller
     - Models
@@ -1093,18 +1111,4 @@ export default useRouter;
 
 ```
 
-```
-journey
-	title Me studying for exams
-	section Exam is announced
-		I start studying: 1: Me
-		Make notes: 2: Me
-		Ask friend for help: 3: Me, Friend
-		We study togther: 5: Me, Friend
-	section Exam Day
-		Syllabys is incomplete: 2: Me
-		Give exam: 1: Me, Friend
-	section Result Declared
-		I passed the exam with destinction!: 5: Me
-		Friend barely gets passing marks: 2: Friend
-```
+
