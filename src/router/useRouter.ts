@@ -1,8 +1,18 @@
 import express, { Request, Response } from "express";
-import userHandlerController from '../controllers/user.controller';
+import {
+    getAllUsersHandler,
+    getSingleUserHandler,
+    createNewUser,
+    deleteUser,
+    updateUser
+} from '../controllers/user.controller'
 const useRouter: express.Router = express.Router();
 
 
-useRouter.get("/user", userHandlerController);
+useRouter.get("/users", getAllUsersHandler);
+useRouter.get("/user/:id", getSingleUserHandler);
+useRouter.post("/user", createNewUser);
+useRouter.delete("/user/:id", deleteUser);
+useRouter.put("/user/:id", updateUser);
 
 export default useRouter;

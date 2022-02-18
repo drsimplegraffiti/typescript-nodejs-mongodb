@@ -1,7 +1,12 @@
 import express, { response } from 'express';
 import userRouter from './router/useRouter';
-
+import connectDb from './db/db';
 const app: express.Application = express();
+
+
+
+// Connect db
+connectDb()
 
 // Host and port
 const hostname: string = '127.0.0.1';
