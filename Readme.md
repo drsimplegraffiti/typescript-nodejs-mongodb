@@ -6,7 +6,7 @@ journey
 	section Installation
 		Node: 1: Software
 		MongoDb: 2: Software
-		Running serverwith ts-node: 3: Software, Concept
+		Running server with ts-node: 3: Software, Concept
 		Creating Express Server: 5: Software, Concept
 	section Concepts
 		Routing: 2: Concept
@@ -16,7 +16,6 @@ journey
 		Hashing with bcrypt: 2: Concept
 ```
 
----
 
 ## Software installation
 
@@ -896,11 +895,6 @@ export default useRouter;
 ```
 
 ---
-
-```mermaid
-hello
-  hello
-```
 
 ---
 
