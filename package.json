@@ -4,7 +4,7 @@
   "description": "> Nodejs\r > Typescript\r > Ts-node & nodemon\r > Postman\r > MongodDb",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.ts"
+    "start": "nodemon src/app.ts"
   },
   "keywords": [],
   "author": "",

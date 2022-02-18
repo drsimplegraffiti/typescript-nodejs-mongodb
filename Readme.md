@@ -651,6 +651,8 @@ export default useRouter;
 
 ## Middleware creation
 
+> Middleware can be specific to a route or global to the project
+
 - In userRoute.ts
 
 ```javascript
@@ -845,13 +847,6 @@ useRouter.get(
   }
 );
 
-/* *
-    @usage: to check form data
-    @ url : http:127.0.0.1:5000/api/login
-    @ method : POST
-    @ fields : name , password, email
-    @ access : PUBLIC
-*/
 useRouter.post(
   "/register",
   [
@@ -883,3 +878,217 @@ export default useRouter;
 ```
 
 ---
+
+```mermaid
+hello
+  hello
+```
+
+---
+
+## Chaining routes
+
+```javascript
+import express, { Request, Response } from "express";
+import { body, validationResult } from "express-validator";
+import appLogger from "../middleware/appLogger";
+const useRouter: express.Router = express.Router();
+
+useRouter
+  .route("/users")
+  .get((request: Request, response: Response) => {
+    return response.send("get path....");
+  })
+  .post((request: Request, response: Response) => {
+    return response.send("post path....");
+  })
+  .delete((request: Request, response: Response) => {
+    return response.send("delete path....");
+  })
+  .all((request: Request, response: Response) => {
+    return response.send("X path....");
+  });
+
+export default useRouter;
+```
+
+---
+
+## Route path
+
+> Paths can be strings pattern or regex pattern
+
+```javascript
+import express, { Request, Response } from "express";
+
+app.get("/profile", (request: Request, response: Response) => {
+  return response.send("get path....");
+});
+
+app.get("/ab*cd", (request: Request, response: Response) => {
+  // if you hit localhost:6767/abcd or  localhost:6767/absdgsdgsdscd it will return true (Ok)
+  return response.send("get path....");
+});
+
+app.get(/abc/, (request: Request, response: Response) => {
+  return response.send("get path....");
+});
+```
+
+---
+
+## Route parameters
+
+```javascript
+app.get("/profile/:userId", (request: Request, response: Response) => {
+  console.log(req.params.bookId);
+  return response.send(req.params.bookId);
+});
+
+// Multiple params
+
+app.get("/profile/:userId/:ageId", (request: Request, response: Response) => {
+  console.log(req.params.bookId, req.params.ageId);
+  return response.send(req.params.bookId, req.params.ageId);
+});
+```
+
+---
+
+---
+
+## Function Handlers
+
+```Javascript
+import express, { Request, Response } from "express";
+
+function profileHandler(request: Request, response: Response) => {
+  console.log(req.params.bookId, req.params.ageId);
+  return response.send(req.params.bookId, req.params.ageId);
+}
+
+app.get("/profile/:userId/:ageId", profileHandler);
+```
+
+---
+
+## Multiple handlers
+
+```Javascript
+import express, { Request, Response } from "express";
+
+function profileHandler(request: Request, response: Response, next:NextFunction) => {
+  console.log(req.params.bookId, req.params.ageId);
+  next()
+}
+
+function bioHandler(request: Request, response: Response,  next:NextFunction) => {
+  console.log(req.params.bookId, req.params.ageId);
+  return response.send(req.params.bookId, req.params.ageId);
+}
+app.get("/profile/:userId/:ageId", [profileHandler, bioHandler]);
+```
+
+---
+
+## Ignoring errors using ---> @ts-ignore
+
+```javascript
+    //@ts-ignore
+    cont user  = 'abayomi'  // This will ignore the 'const' typo
+```
+
+---
+
+## Request params interface
+
+```javascript
+import express, { Request, Response } from "express";
+const useRouter: express.Router = express.Router();
+
+useRouter.get(
+  "/api/users/:userId/:bookId",
+  (
+    request: Request<{ userId: string, bookId: string }>,
+    response: Response
+  ) => {
+    const bookId = request.params.bookId;
+    const userId = request.params.userId;
+  }
+);
+
+export default useRouter;
+```
+
+---
+
+## Req body interfaces
+
+```javascript
+import express, { Request, Response } from "express";
+const useRouter: express.Router = express.Router();
+
+useRouter.get(
+  "/api/users/:userId/:bookId",
+  (
+    request: Request<{ userId: string, bookId: string }, {}, { name: string }>,
+    response: Response
+  ) => {
+    const body = request.body.name;
+  }
+);
+
+export default useRouter;
+```
+
+---
+
+## Error handling
+
+```javascript
+import express, { Request, Response } from "express";
+const useRouter: express.Router = express.Router();
+
+useRouter.get("/error", (request: Request, response: Response) => {
+  throw new Error("Something went wrong ...");
+});
+
+export default useRouter;
+```
+
+## Throwing async errors
+
+```javascript
+import express, { Request, Response } from "express";
+const useRouter: express.Router = express.Router();
+
+async function throwsError() {
+  throw new Error("Server error....");
+}
+
+useRouter.get("/error", async (request: Request, response: Response) => {
+  try {
+    await throwsError();
+    response.status(200);
+  } catch (error) {
+    response.status(500).json({
+      msg: "something went wrong",
+    });
+  }
+});
+
+export default useRouter;
+```
+
+---
+
+## Folder structure ----> Service , Routes, Controller, Model
+
+```mermaid
+- Services
+  - Controller
+    - Models
+      - Routes
+        - Main entry file
+
+```
