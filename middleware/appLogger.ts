@@ -12,4 +12,4 @@ let appLogger = (request: express.Request, response: express.Response, next: exp
 
 };
 
-export default appLogger
+export default appLogger;
