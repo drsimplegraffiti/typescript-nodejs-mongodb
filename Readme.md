@@ -241,3 +241,252 @@ server.listen(port, hostname, () => {
 ---
 
 ## Custom Module with String Util
+
+- create a class in utils folder and create a file StringUtil.ts
+- in StringUtil
+
+```
+
+export class StringUtil {
+    public static printLength(str: string): number {
+        return str.length
+    }
+}
+```
+
+```javascript
+import http, { Server, IncomingMessage, ServerResponse } from "http";
+import { StringUtil } from "./utils/StringUtils";
+
+const hostname: string = "127.0.0.1";
+const port: number = 5000;
+
+const server: Server = http.createServer(
+  (request: IncomingMessage, response: ServerResponse) => {
+    response.statusCode = 200;
+    response.setHeader("Content-Type", "text/html");
+    // string util
+    let customerName: string = "Joseph";
+    let length: number = StringUtil.printLength(customerName);
+    response.end(`<pre>Length is ${length}</pre>`);
+  }
+);
+
+server.listen(port, hostname, () => {
+  console.log(`server running on ${hostname}:${port}`);
+});
+```
+
+---
+
+## Exercise with Math util (custom modules)
+
+- Create a MathUtil.ts in the utils folder
+
+```
+export class MathUtil {
+    public static printMathTable(value: number): string {
+        let tempStr: string = '';
+        for (let i: number = 1; i <= 10; i++) {
+            tempStr += `${value} * ${i} = ${value * i}`
+        }
+        return tempStr
+    }
+}
+```
+
+```javascript
+import http, { Server, IncomingMessage, ServerResponse } from "http";
+import { MathUtil } from "./utils/MathUtil";
+
+const hostname: string = "127.0.0.1";
+const port: number = 5000;
+
+const server: Server = http.createServer(
+  (request: IncomingMessage, response: ServerResponse) => {
+    response.statusCode = 200;
+    response.setHeader("Content-Type", "text/html");
+    // math util
+    let theNumber: number = 5;
+    let result = MathUtil.printMathTable(theNumber);
+    response.end(`<pre>${result}</pre>`);
+  }
+);
+
+server.listen(port, hostname, () => {
+  console.log(`server running on ${hostname}:${port}`);
+});
+```
+
+---
+
+## Routing in Node js
+
+```javascript
+import http, { Server, IncomingMessage, ServerResponse } from "http";
+
+const hostname: string = "127.0.0.1";
+const port: number = 5000;
+
+const server: Server = http.createServer(
+  (request: IncomingMessage, response: ServerResponse) => {
+    response.statusCode = 200;
+    response.setHeader("Content-Type", "text/html");
+
+    //Node js routing
+    let url: string | undefined = request.url;
+    let method: string | undefined = request.method;
+    let result: string = "";
+    if (url === "/" && method === "GET") {
+      result = `<h3 style="font-family: Lato; color: green;">Welcome to the typescript page</h3>`;
+    } else if (url === "/about" && method === "GET") {
+      result = `<h3 style="font-family: Lato; color: green;">About PAGE</h3>`;
+    } else if (url === "/contact" && method === "GET") {
+      result = `<h3 style="font-family: Lato; color: green;">Contact PAGE</h3>`;
+    } else {
+      result = `<h3 style="font-family: Lato; color: green;">...404 PAGE</h3>`;
+    }
+    response.end(`<pre>${result}</pre>`);
+  }
+);
+
+server.listen(port, hostname, () => {
+  console.log(`server running on ${hostname}:${port}`);
+});
+```
+
+---
+
+## Optimizing routing with class
+
+- Create a router folder and apiRouter.ts file
+
+```
+import http from 'http';
+
+export class ApiRouter {
+    public static mapRoutes(request: http.IncomingMessage, response: http.ServerResponse) {
+
+        //Node js routing
+        let url: string | undefined = request.url;
+        let method: string | undefined = request.method;
+        let result: string = "";
+        if (url === "/" && method === "GET") {
+            result = `<h3 style="font-family: Lato; color: green;">Welcome to the typescript page</h3>`;
+        } else if (url === "/about" && method === "GET") {
+            result = `<h3 style="font-family: Lato; color: green;">About PAGE</h3>`;
+        } else if (url === "/contact" && method === "GET") {
+            result = `<h3 style="font-family: Lato; color: green;">Contact PAGE</h3>`;
+        } else {
+            result = `<h3 style="font-family: Lato; color: green;">...404 PAGE</h3>`;
+        }
+        response.end(`<pre>${result}</pre>`);
+    }
+}
+```
+
+In app.ts
+
+```javascript
+import http, { Server, IncomingMessage, ServerResponse } from "http";
+import { ApiRouter } from "./router/apiRouter";
+const hostname: string = "127.0.0.1";
+const port: number = 5000;
+
+const server: Server = http.createServer(
+  (request: IncomingMessage, response: ServerResponse) => {
+    response.statusCode = 200;
+    response.setHeader("Content-Type", "text/html");
+
+    // routes
+    ApiRouter.mapRoutes(request, response);
+  }
+);
+
+server.listen(port, hostname, () => {
+  console.log(`server running on ${hostname}:${port}`);
+});
+```
+
+---
+
+## Handling POST Request ----> Form Data Handling
+
+```javascript
+import http, { Server, IncomingMessage, ServerResponse } from "http";
+const hostname: string = "127.0.0.1";
+const port: number = 5000;
+
+const server: Server = http.createServer(
+  (request: IncomingMessage, response: ServerResponse) => {
+    response.statusCode = 200;
+    response.setHeader("Content-Type", "application/json");
+
+    // url and post request
+    try {
+      if (request.url === "/user" && request.method === "POST") {
+        let body: any = "";
+        request
+          .on("data", (chunk) => {
+            body += chunk;
+          })
+          .on("end", () => {
+            let formData = JSON.parse(body);
+            response.end(`<pre>${JSON.stringify(formData)}</pre>`);
+          });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+server.listen(port, hostname, () => {
+  console.log(`server running on ${hostname}:${port}`);
+});
+```
+
+- Result
+  <kbd><pre>{"name":"joe","age":67}</pre></kbd>
+
+---
+
+## Login functionality using NodeJs with Typescript
+
+```javascript
+import http, { Server, IncomingMessage, ServerResponse } from "http";
+const hostname: string = "127.0.0.1";
+const port: number = 5000;
+
+const server: Server = http.createServer(
+  (request: IncomingMessage, response: ServerResponse) => {
+    response.statusCode = 200;
+    response.setHeader("Content-Type", "text/html");
+
+    // url and post request
+    try {
+      if (request.url === "/login" && request.method === "POST") {
+        let body: any = "";
+        request
+          .on("data", (chunk) => {
+            body += chunk;
+          })
+          .on("end", () => {
+            let formData = JSON.parse(body);
+            if (formData.name === "Joe" && formData.password === "ad1234") {
+              response.end(`<pre>login successful</pre>`);
+            } else {
+              response.end(`<pre>login denied</pre>`);
+            }
+          });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+server.listen(port, hostname, () => {
+  console.log(`server running on ${hostname}:${port}`);
+});
+```

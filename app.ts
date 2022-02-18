@@ -1,26 +1,36 @@
-import http, { Server, IncomingMessage, ServerResponse } from 'http';
-import fs from 'fs';
-import path from 'path';
 
-const hostname: string = '127.0.0.1';
-const port: number = 5000
+import http, { Server, IncomingMessage, ServerResponse } from "http";
+const hostname: string = "127.0.0.1";
+const port: number = 5000;
 
+const server: Server = http.createServer(
+    (request: IncomingMessage, response: ServerResponse) => {
+        response.statusCode = 200;
+        response.setHeader("Content-Type", "text/html");
 
-const server: Server = http.createServer((request: IncomingMessage, response: ServerResponse) => {
-    response.statusCode = 200;
-    response.setHeader('Content-Type', 'text/html')
+        // url and post request
+        try {
+            if (request.url === '/login' && request.method === 'POST') {
+                let body: any = '';
+                request.on('data', (chunk) => {
+                    body += chunk;
+                }).on('end', () => {
+                    let formData = JSON.parse(body);
+                    if (formData.name === "Joe" && formData.password === 'ad1234') {
+                        response.end(`<pre>login successful</pre>`)
+                    } else {
+                        response.end(`<pre>login denied</pre>`)
+                    }
+                })
+            }
+        } catch (error) {
+            console.log(error);
 
-    //reading json data
-    fs.readFile(path.join(__dirname, 'data', 'MOCK_DATA.json'), 'utf-8', (error, result) => {
-        if (error) throw error;
-        response.end(`<pre>${result}</pre>`)
-    })
-
-
-})
+        }
+    }
+);
 
 server.listen(port, hostname, () => {
     console.log(`server running on ${hostname}:${port}`);
-
-})
+});
 
