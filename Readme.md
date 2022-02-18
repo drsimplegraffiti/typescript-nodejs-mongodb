@@ -490,3 +490,330 @@ server.listen(port, hostname, () => {
   console.log(`server running on ${hostname}:${port}`);
 });
 ```
+
+---
+
+## Create server with Express JS
+
+```Javascript
+// npm install @types/node @types/express express
+
+import express, { response } from 'express';
+
+const app: express.Application = express();
+
+// Host and port
+const hostname: string = '127.0.0.1';
+const port: number = 5000;
+
+
+app.get('/', (request: express.Request, response: express.Response) => {
+    response.status(200).send(`<h3>welcome to express typescript</h3>`)
+    // response.send() ---> for html tag
+    // response.sendFile() ---> for html page response
+    // response.json() ---> for json
+    // response.download() ---> for download
+})
+
+
+// Listen to server
+app.listen(port, hostname, () => {
+    console.log(`App running on ${hostname}:${port}`);
+
+})
+```
+
+---
+
+## Routing in Express
+
+- In app.ts
+
+```javascript
+import express, { response } from "express";
+import apiRouter from "./router/apiRouter";
+
+const app: express.Application = express();
+
+// Host and port
+const hostname: string = "127.0.0.1";
+const port: number = 5000;
+
+app.get("/", (request: express.Request, response: express.Response) => {
+  response.status(200).send(`<h3>welcome to express typescript</h3>`);
+});
+
+// Configuration for router
+app.use("/api", apiRouter);
+
+// Listen to server
+app.listen(port, hostname, () => {
+  console.log(`App running on ${hostname}:${port}`);
+});
+```
+
+- In Router folder/apiRouter.ts
+
+```javascript
+import express from "express";
+
+const apiRouter: express.Router = express.Router();
+
+// GET request
+apiRouter.get("/", (request: express.Request, response: express.Response) => {
+  response.status(200).send(`<h3>welcome to API ROUTER <h3>`);
+});
+
+apiRouter.get(
+  "/test",
+  (request: express.Request, response: express.Response) => {
+    response.status(200).send(`<h3>Test API ROUTER <h3>`);
+  }
+);
+export default apiRouter;
+```
+
+---
+
+## Handling Form Data Express and Typescript
+
+- In app.ts
+
+```Javascript
+import express, { response } from 'express';
+import userRouter from './router/useRouter';
+
+const app: express.Application = express();
+
+// Host and port
+const hostname: string = '127.0.0.1';
+const port: number = 5000;
+
+
+// middleware ---> form data
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+
+app.get('/', (request: express.Request, response: express.Response) => {
+    response.status(200).send(`<h3>welcome to express typescript</h3>`)
+})
+
+// Configuration for router
+app.use('/api', userRouter);
+
+
+// Listen to server
+app.listen(port, hostname, () => {
+    console.log(`App running on ${hostname}:${port}`);
+
+})
+```
+
+- In userRouter
+
+```javascript
+import express from "express";
+
+const useRouter: express.Router = express.Router();
+
+/* *
+    @usage: home page check
+    @ url : http:127.0.0.1:5000/api/
+    @ method : GET
+    @ fields : none
+    @ access : PUBLIC
+ */
+useRouter.get("/", (request: express.Request, response: express.Response) => {
+  response.status(200).send(`<h3>welcome to User ROUTER <h3>`);
+});
+
+/* *
+    @usage: to check form data
+    @ url : http:127.0.0.1:5000/api/login
+    @ method : POST
+    @ fields : name , password
+    @ access : PUBLIC
+*/
+useRouter.post(
+  "/login",
+  (request: express.Request, response: express.Response) => {
+    const formData = request.body;
+    response.status(200).json({
+      message: "Form data received",
+      formData: formData,
+    });
+  }
+);
+export default useRouter;
+```
+
+---
+
+## Middleware creation
+
+- In userRoute.ts
+
+```javascript
+import express from "express";
+import appLogger from "../middleware/appLogger";
+const useRouter: express.Router = express.Router();
+
+/* *
+    @usage: home page check
+    @ url : http:127.0.0.1:5000/api/
+    @ method : GET
+    @ fields : none
+    @ access : PUBLIC
+ */
+useRouter.get(
+  "/",
+  appLogger,
+  (request: express.Request, response: express.Response) => {
+    response.status(200).send(`<h3>welcome to User ROUTER <h3>`);
+  }
+);
+
+/* *
+    @usage: to check form data
+    @ url : http:127.0.0.1:5000/api/login
+    @ method : POST
+    @ fields : name , password
+    @ access : PUBLIC
+*/
+useRouter.post(
+  "/login",
+  (request: express.Request, response: express.Response) => {
+    const formData = request.body;
+    response.status(200).json({
+      message: "Form data received",
+      formData: formData,
+    });
+  }
+);
+export default useRouter;
+```
+
+- In app.ts
+
+```Javascript
+import express, { response } from 'express';
+import userRouter from './router/useRouter';
+
+const app: express.Application = express();
+
+// Host and port
+const hostname: string = '127.0.0.1';
+const port: number = 5000;
+
+
+// middleware ---> form data
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+
+app.get('/', (request: express.Request, response: express.Response) => {
+    response.status(200).send(`<h3>welcome to express typescript</h3>`)
+})
+
+// Configuration for router
+app.use('/api', userRouter);
+
+
+// Listen to server
+app.listen(port, hostname, () => {
+    console.log(`App running on ${hostname}:${port}`);
+
+})
+```
+
+- In appLogger.ts
+
+```javascript
+import express from "express";
+
+let appLogger = (
+  request: express.Request,
+  response: express.Response,
+  next: express.NextFunction
+) => {
+  //track url, method, time, data
+  let url = request.url;
+  let method = request.method;
+  let date = new Date().toLocaleDateString();
+  let time = new Date().toLocaleTimeString();
+  let result: string = `[${url}] [${method}] -[${date}] -[${time}]`;
+  console.log(result);
+  next();
+};
+
+export default appLogger;
+```
+
+---
+
+## Password Encryption
+
+> Install bcrypt --npm i bcryptjs @types/bcryptjs--> npm i bcrypt
+
+```javascript
+import express from "express";
+import bcrypt from "bcryptjs";
+import appLogger from "../middleware/appLogger";
+const useRouter: express.Router = express.Router();
+
+/* *
+    @usage: home page check
+    @ url : http:127.0.0.1:5000/api/
+    @ method : GET
+    @ fields : none
+    @ access : PUBLIC
+ */
+useRouter.get(
+  "/",
+  appLogger,
+  (request: express.Request, response: express.Response) => {
+    response.status(200).send(`<h3>welcome to User ROUTER <h3>`);
+  }
+);
+
+/* *
+    @usage: to check form data
+    @ url : http:127.0.0.1:5000/api/login
+    @ method : POST
+    @ fields : name , password
+    @ access : PUBLIC
+*/
+useRouter.post(
+  "/register",
+  async (request: express.Request, response: express.Response) => {
+    const { name, email, password } = request.body;
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      response.status(200).json({
+        message: "Form data received",
+        userData: { name, email, password },
+        hashedPassword: hashedPassword,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+export default useRouter;
+```
+
+```
+{
+  "message": "Form data received",
+  "userData": {
+    "name": "Joe",
+    "email": "ta@u.com",
+    "password": "ad1234"
+  },
+  "hashedPassword": "$2a$10$e6tVd9JbruZTYyYvP4Dv7OmCLnCmiqBl68tVj7YSTVPwyOuLLwtXm"
+}
+```
+
+---
+
+## Server side form validations

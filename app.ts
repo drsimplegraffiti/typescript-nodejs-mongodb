@@ -1,36 +1,27 @@
+import express, { response } from 'express';
+import userRouter from './router/useRouter';
 
-import http, { Server, IncomingMessage, ServerResponse } from "http";
-const hostname: string = "127.0.0.1";
+const app: express.Application = express();
+
+// Host and port
+const hostname: string = '127.0.0.1';
 const port: number = 5000;
 
-const server: Server = http.createServer(
-    (request: IncomingMessage, response: ServerResponse) => {
-        response.statusCode = 200;
-        response.setHeader("Content-Type", "text/html");
 
-        // url and post request
-        try {
-            if (request.url === '/login' && request.method === 'POST') {
-                let body: any = '';
-                request.on('data', (chunk) => {
-                    body += chunk;
-                }).on('end', () => {
-                    let formData = JSON.parse(body);
-                    if (formData.name === "Joe" && formData.password === 'ad1234') {
-                        response.end(`<pre>login successful</pre>`)
-                    } else {
-                        response.end(`<pre>login denied</pre>`)
-                    }
-                })
-            }
-        } catch (error) {
-            console.log(error);
+// middleware ---> form data
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 
-        }
-    }
-);
+app.get('/', (request: express.Request, response: express.Response) => {
+    response.status(200).send(`<h3>welcome to express typescript</h3>`)
+})
 
-server.listen(port, hostname, () => {
-    console.log(`server running on ${hostname}:${port}`);
-});
+// Configuration for router
+app.use('/api', userRouter);
 
+
+// Listen to server
+app.listen(port, hostname, () => {
+    console.log(`App running on ${hostname}:${port}`);
+
+})
